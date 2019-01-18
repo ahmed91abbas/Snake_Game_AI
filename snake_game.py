@@ -80,7 +80,7 @@ class snake:
             else:
                 bp.move(bp.x_dir, bp.y_dir)
 
-        if not self.valid_head_pos():
+        if not self.valid_head_pos(self.head.pos):
             self.kill_snake()
             return False
 
@@ -99,9 +99,9 @@ class snake:
         #TODO
         print("The snake is dead!", "Score =", self.score)
 
-    def valid_head_pos(self):
-        x = self.head.pos[0]
-        y = self.head.pos[1]
+    def valid_head_pos(self, pos):
+        x = pos[0]
+        y = pos[1]
         in_bounds = x < self.rows and y < self.rows and x >= 0 and y >= 0
         body_overlap = False #TODO
         if in_bounds and not body_overlap:
@@ -123,7 +123,19 @@ class snake:
         self.score += 1
         #TODO
         tail = self.body[len(self.body)-1]
-        print(tail.pos)
+        x = tail.pos[0]
+        y = tail.pos[1]
+        if tail.x_dir == 1:
+            pos = (x-1, y)
+        elif tail.x_dir == -1:
+            pos = (x+1, y)
+        elif tail.y_dir == 1:
+            pos = (x, y-1)
+        elif tail.y_dir == -1:
+            pos = (x, y+1)
+        if self.valid_head_pos(pos):
+            new_tail = body_part(pos, self.gap, x_dir=tail.x_dir, y_dir=tail.y_dir)
+            self.body.append(new_tail)
         self.place_random_food()
 
 class game_win:
@@ -132,7 +144,7 @@ class game_win:
         self.height = settings[1]
         self.rows = settings[2]
         self.gap = self.width // self.rows
-        self.snake  = snake((10,10), settings)
+        self.snake  = snake((0,self.rows//2), settings)
 
     def draw_grid(self, surface):
         color = (255,255,255)
@@ -160,9 +172,9 @@ class game_win:
         pass
 
 def main():
-    width = 500
-    height = 500
-    rows = 20
+    width = 480
+    height = 480
+    rows = 12
     settings = (width, height, rows)
     win = game_win(settings)
     win.create_game()
