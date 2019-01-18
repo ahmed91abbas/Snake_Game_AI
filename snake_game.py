@@ -32,6 +32,9 @@ class snake:
         self.gap = self.width // self.rows
         self.body = []
         self.turns = {}
+        self.x_dir = 1
+        self.y_dir = 0
+        self.score = 0
         self.head = body_part(pos, self.gap, color=(155, 46, 108))
         self.body.append(self.head)
 
@@ -50,19 +53,19 @@ class snake:
             if event.type == pygame.QUIT:
                 sys.exit()
             keys = pygame.key.get_pressed()
-            if keys[pygame.K_LEFT]:
+            if keys[pygame.K_LEFT] and self.x_dir != 1:
                 self.x_dir = -1
                 self.y_dir = 0
                 self.turns[self.head.pos[:]] = [self.x_dir, self.y_dir]
-            elif keys[pygame.K_RIGHT]:
+            elif keys[pygame.K_RIGHT] and self.x_dir != -1:
                 self.x_dir = 1
                 self.y_dir = 0
                 self.turns[self.head.pos[:]] = [self.x_dir, self.y_dir]
-            elif keys[pygame.K_UP]:
+            elif keys[pygame.K_UP] and self.y_dir != 1:
                 self.x_dir = 0
                 self.y_dir = -1
                 self.turns[self.head.pos[:]] = [self.x_dir, self.y_dir]
-            elif keys[pygame.K_DOWN]:
+            elif keys[pygame.K_DOWN] and self.y_dir != -1:
                 self.x_dir = 0
                 self.y_dir = 1
                 self.turns[self.head.pos[:]] = [self.x_dir, self.y_dir]
@@ -93,12 +96,15 @@ class snake:
             self.free_positions.remove(bp.pos)
 
     def kill_snake(self):
-        print("The snake is dead!")
+        #TODO
+        print("The snake is dead!", "Score =", self.score)
 
     def valid_head_pos(self):
         x = self.head.pos[0]
         y = self.head.pos[1]
-        if x < self.rows and y < self.rows and x >= 0 and y >= 0:
+        in_bounds = x < self.rows and y < self.rows and x >= 0 and y >= 0
+        body_overlap = False #TODO
+        if in_bounds and not body_overlap:
             return True
         return False
 
@@ -114,6 +120,8 @@ class snake:
         return False
 
     def eat(self):
+        self.score += 1
+        #TODO
         tail = self.body[len(self.body)-1]
         print(tail.pos)
         self.place_random_food()
