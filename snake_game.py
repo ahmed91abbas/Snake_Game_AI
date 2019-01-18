@@ -24,6 +24,12 @@ class body_part:
     def place(self, pos):
         self.pos = pos
 
+    def __eq__(self, other):
+        return self.pos==other.pos
+
+    def __hash__(self):
+        return hash((self.pos))
+
 class snake:
     def __init__(self, pos, settings):
         self.pos = pos
@@ -96,14 +102,15 @@ class snake:
             self.free_positions.remove(bp.pos)
 
     def kill_snake(self):
-        #TODO
         print("The snake is dead!", "Score =", self.score)
 
     def valid_head_pos(self, pos):
         x = pos[0]
         y = pos[1]
-        in_bounds = x < self.rows and y < self.rows and x >= 0 and y >= 0
-        body_overlap = False #TODO
+        in_bounds = x < self.rows and y < self.rows\
+                     and x >= 0 and y >= 0
+        temp = set(self.body)
+        body_overlap = len(temp) != len(self.body)
         if in_bounds and not body_overlap:
             return True
         return False
@@ -121,7 +128,6 @@ class snake:
 
     def eat(self):
         self.score += 1
-        #TODO
         tail = self.body[len(self.body)-1]
         x = tail.pos[0]
         y = tail.pos[1]
@@ -133,8 +139,10 @@ class snake:
             pos = (x, y-1)
         elif tail.y_dir == -1:
             pos = (x, y+1)
+        #TODO handel the case when it is not valid
         if self.valid_head_pos(pos):
-            new_tail = body_part(pos, self.gap, x_dir=tail.x_dir, y_dir=tail.y_dir)
+            new_tail = body_part(pos, self.gap,\
+                        x_dir=tail.x_dir, y_dir=tail.y_dir)
             self.body.append(new_tail)
         self.place_random_food()
 
