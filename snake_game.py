@@ -9,7 +9,7 @@ class body_part:
         self.color = color
         self.gap = gap
 
-    def draw(self, surface, flag=False):
+    def draw(self, surface):
         i = self.pos[0]
         j = self.pos[1]
         area = (i*self.gap+1, j*self.gap+1, self.gap-2, self.gap-2)
@@ -21,16 +21,18 @@ class body_part:
         self.pos = (self.pos[0] + x_dir, self.pos[1] + y_dir)
 
 class snake:
-    def __init__(self, color, pos, settings):
-        self.color = color
+    def __init__(self, pos, settings):
         self.pos = pos
         self.width = settings[0]
         self.rows = settings[2]
-        gap = self.width // self.rows
+        self.gap = self.width // self.rows
         self.body = []
         self.turns = {}
-        self.head = body_part(pos, gap, color=(155, 46, 108))
+        self.head = body_part(pos, self.gap, color=(155, 46, 108))
         self.body.append(self.head)
+
+        pos = (5, 5)
+        self.food = body_part(pos, self.gap, color=(164, 244, 66))
 
     def move(self):
         if not self.valid_head_pos():
@@ -69,11 +71,9 @@ class snake:
         return True
 
     def draw(self, surface):
-        for i, c in enumerate(self.body):
-            if i == 0:
-                c.draw(surface, True)
-            else:
-                c.draw(surface)
+        self.place_random_food(surface)
+        for i, bp in enumerate(self.body):
+            bp.draw(surface)
 
     def kill_snake(self):
         print("The snake is dead!")
@@ -86,13 +86,27 @@ class snake:
             return True
         return False
 
+    def place_random_food(self, surface):
+        self.food.draw(surface)
+
+    def reached_food(self):
+        x = self.head.pos[0]
+        y = self.head.pos[1]
+        if x == self.food.pos[0] and y == self.food.pos[1]:
+            return True
+        return False
+
+    def eat(self):
+        tail = self.body[len(self.body)-1]
+        print(tail)
+
 class game_win:
     def __init__(self, settings):
         self.width = settings[0]
         self.height = settings[1]
         self.rows = settings[2]
         self.gap = self.width // self.rows
-        self.snake  = snake((255,0,0), (10,10), settings)
+        self.snake  = snake((10,10), settings)
         self.create_game()
 
     def draw_grid(self, surface):
@@ -114,7 +128,7 @@ class game_win:
         run = True
         clock = pygame.time.Clock()
         while run:
-            pygame.time.delay(50)
+            pygame.time.delay(60)
             clock.tick(10) #game won't run more than 10 fps
             self.redraw(surface)
             run = self.snake.move()
