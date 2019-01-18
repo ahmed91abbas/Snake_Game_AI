@@ -3,7 +3,8 @@ import sys
 import random
 
 class body_part:
-    def __init__(self, pos, gap, x_dir=1, y_dir=0, color=(255,0,0)):
+    def __init__(self, pos, gap, x_dir=1,\
+                    y_dir=0, color=(255,0,0)):
         self.pos = pos
         self.x_dir = x_dir
         self.y_dir = y_dir
@@ -155,7 +156,7 @@ class game_win:
         self.snake  = snake((0,self.rows//2), settings)
 
     def draw_grid(self, surface):
-        color = (255,255,255)
+        color = (128, 137, 153)
         v = 0
         for i in range(self.rows):
             v = v + self.gap
@@ -180,9 +181,9 @@ class game_win:
         pass
 
 def main():
-    width = 480
-    height = 480
-    rows = 12
+    width = 504
+    height = 504
+    rows = 14
     settings = (width, height, rows)
     win = game_win(settings)
     win.create_game()
