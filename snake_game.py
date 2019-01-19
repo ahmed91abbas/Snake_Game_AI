@@ -184,6 +184,7 @@ class snake:
 class game_win:
     def __init__(self, settings):
         pygame.init()
+        pygame.display.set_caption('Snake Game')
         os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,70)
         self.width = settings[0]
         self.height = settings[1]
