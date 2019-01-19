@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+from algorithmic_player import algo_player
 
 class body_part:
     def __init__(self, pos, gap, x_dir=1,\
@@ -55,11 +56,19 @@ class snake:
         self.free_positions.remove(pos)
         self.place_random_food()
 
-    def move(self):
-        for event in pygame.event.get():
+    def move(self, player=None):
+        if player:
+            events = player.get_events()
+        else:
+            events = pygame.event.get()
+
+        for event in events:
             if event.type == pygame.QUIT:
                 sys.exit()
-            keys = pygame.key.get_pressed()
+            if player:
+                keys = player.next_move()
+            else:
+                keys = pygame.key.get_pressed()
             if keys[pygame.K_LEFT] and self.x_dir != 1:
                 self.x_dir = -1
                 self.y_dir = 0
@@ -154,6 +163,7 @@ class game_win:
         self.rows = settings[2]
         self.gap = self.width // self.rows
         self.snake  = snake((0,self.rows//2), settings)
+        self.algo_player = algo_player(self.snake)
 
     def draw_grid(self, surface):
         color = (128, 137, 153)
@@ -177,7 +187,7 @@ class game_win:
             pygame.time.delay(60)
             clock.tick(10) #game won't run more than 10 fps
             self.redraw(surface)
-            run = self.snake.move()
+            run = self.snake.move(player=self.algo_player)
         pass
 
 def main():
