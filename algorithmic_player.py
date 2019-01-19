@@ -39,37 +39,41 @@ class algo_player:
         #food to the right of snake head
         if sx < fx:
             if x_dir == -1:
-                if sy > rows // 2:
-                    self.set_key(UP)
-                else:
-                    self.set_key(DOWN)
+                # if sy > rows // 2:
+                #     self.set_key(UP)
+                # else:
+                #     self.set_key(DOWN)
+                self.evade()
             else:
                 self.set_key(RIGHT)
         #food to the left of snake head
         elif sx > fx:
             if x_dir == 1:
-                if sy > rows // 2:
-                    self.set_key(UP)
-                else:
-                    self.set_key(DOWN)
+                # if sy > rows // 2:
+                #     self.set_key(UP)
+                # else:
+                #     self.set_key(DOWN)
+                self.evade()
             else:
                 self.set_key(LEFT)
         #food upove of snake head
         elif sy < fy:
             if y_dir == -1:
-                if sx > rows // 2:
-                    self.set_key(LEFT)
-                else:
-                    self.set_key(RIGHT)
+                # if sx > rows // 2:
+                #     self.set_key(LEFT)
+                # else:
+                #     self.set_key(RIGHT)
+                self.evade()
             else:
                 self.set_key(DOWN)
         #food under of snake head
         elif sy > fy:
             if y_dir == 1:
-                if sx > rows // 2:
-                    self.set_key(LEFT)
-                else:
-                    self.set_key(RIGHT)
+                # if sx > rows // 2:
+                #     self.set_key(LEFT)
+                # else:
+                #     self.set_key(RIGHT)
+                self.evade()
             else:
                 self.set_key(UP)
         if self.about_to_die():

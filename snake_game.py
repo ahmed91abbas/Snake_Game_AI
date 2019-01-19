@@ -198,7 +198,8 @@ def main():
     height = 504
     rows = 14
     settings = (width, height, rows)
-    win = game_win(settings)
-    win.create_game()
+    for i in range(30):
+        win = game_win(settings)
+        win.create_game()
 
 main()
