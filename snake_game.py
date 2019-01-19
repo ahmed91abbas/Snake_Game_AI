@@ -3,6 +3,7 @@ import sys
 import random
 from algorithmic_player import algo_player
 import os
+import timeit
 
 class body_part:
     def __init__(self, pos, gap, x_dir=1,\
@@ -39,6 +40,7 @@ class snake:
         self.width = settings[0]
         self.height = settings[1]
         self.rows = settings[2]
+        self.start_time = timeit.default_timer()
         self.font = pygame.font.SysFont("monospace", 25)
         self.gap = self.width // self.rows
         self.body = []
@@ -118,11 +120,15 @@ class snake:
             self.snake_positions.add(bp.pos)
 
         #Add score text
-        label = self.font.render("Score = " + str(self.score), 1, (255,255,0))
-        surface.blit(label, (self.width // 2.8, self.height + 12))
+        run_time = timeit.default_timer() - self.start_time
+        score = str(self.score) if len(str(self.score)) > 1 else "0" + str(self.score)
+        text = "Score = " + score + "    Run time = " + self.time_str(run_time)
+        label = self.font.render(text, 1, (255,255,0))
+        surface.blit(label, (29, self.height + 12))
 
     def kill_snake(self):
-        print("The snake is dead!", "Score =", self.score)
+        time = self.time_str(timeit.default_timer() - self.start_time)
+        print("The snake is dead!", "Score =", self.score, "Time =", time)
 
     def valid_head_pos(self, pos):
         x = pos[0]
@@ -166,6 +172,15 @@ class snake:
             self.body.append(new_tail)
         self.place_random_food()
 
+    def time_str(self, t):
+        minutes = str(int(t / 60))
+        seconds = str(int(t % 60))
+        if len(minutes) < 2:
+            minutes = "0" + minutes
+        if len(seconds) < 2:
+            seconds = "0" + seconds
+        return minutes + ":" + seconds
+
 class game_win:
     def __init__(self, settings):
         pygame.init()
@@ -197,7 +212,7 @@ class game_win:
         clock = pygame.time.Clock()
         while run:
             pygame.time.delay(60)
-            clock.tick(10) #game won't run more than 10 fps
+            clock.tick(20) #fps
             self.redraw(surface)
             run = self.snake.move(player=self.algo_player)
         pass
