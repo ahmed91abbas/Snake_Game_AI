@@ -40,6 +40,7 @@ class snake:
         self.gap = self.width // self.rows
         self.body = []
         self.turns = {}
+        self.snake_positions = set()
         self.x_dir = 1
         self.y_dir = 0
         self.score = 0
@@ -107,9 +108,11 @@ class snake:
     def draw(self, surface):
         self.free_positions = self.all_positions.copy()
         self.food.draw(surface)
+        self.snake_positions = set()
         for i, bp in enumerate(self.body):
             bp.draw(surface)
             self.free_positions.remove(bp.pos)
+            self.snake_positions.add(bp.pos)
 
     def kill_snake(self):
         print("The snake is dead!", "Score =", self.score)
