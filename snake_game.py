@@ -2,6 +2,7 @@ import pygame
 import sys
 import random
 from algorithmic_player import algo_player
+import os
 
 class body_part:
     def __init__(self, pos, gap, x_dir=1,\
@@ -36,7 +37,9 @@ class snake:
     def __init__(self, pos, settings):
         self.pos = pos
         self.width = settings[0]
+        self.height = settings[1]
         self.rows = settings[2]
+        self.font = pygame.font.SysFont("monospace", 25)
         self.gap = self.width // self.rows
         self.body = []
         self.turns = {}
@@ -114,6 +117,10 @@ class snake:
             self.free_positions.remove(bp.pos)
             self.snake_positions.add(bp.pos)
 
+        #Add score text
+        label = self.font.render("Score = " + str(self.score), 1, (255,255,0))
+        surface.blit(label, (self.width // 2.8, self.height + 12))
+
     def kill_snake(self):
         print("The snake is dead!", "Score =", self.score)
 
@@ -161,6 +168,8 @@ class snake:
 
 class game_win:
     def __init__(self, settings):
+        pygame.init()
+        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (300,70)
         self.width = settings[0]
         self.height = settings[1]
         self.rows = settings[2]
@@ -183,7 +192,7 @@ class game_win:
         pygame.display.update()
 
     def create_game(self):
-        surface = pygame.display.set_mode((self.width, self.height))
+        surface = pygame.display.set_mode((self.width, self.height + 50))
         run = True
         clock = pygame.time.Clock()
         while run:
@@ -194,9 +203,9 @@ class game_win:
         pass
 
 def main():
-    width = 504
-    height = 504
-    rows = 14
+    width = 500
+    height = 500
+    rows = 20
     settings = (width, height, rows)
     for i in range(1):
         win = game_win(settings)
