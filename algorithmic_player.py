@@ -37,32 +37,39 @@ class algo_player:
         fx = food.pos[0]
         fy = food.pos[1]
         #food to the right of snake head
+        look_ahead = 2
         if sx < fx:
-            if x_dir == -1:
+            if x_dir == -1 or self.danger_ahead(look_ahead, RIGHT):
                 self.evade()
             else:
                 self.set_key(RIGHT)
         #food to the left of snake head
         elif sx > fx:
-            if x_dir == 1:
+            if x_dir == 1 or self.danger_ahead(look_ahead, LEFT):
                 self.evade()
             else:
                 self.set_key(LEFT)
         #food upove of snake head
         elif sy < fy:
-            if y_dir == -1:
+            if y_dir == -1 or self.danger_ahead(look_ahead, DOWN):
                 self.evade()
             else:
                 self.set_key(DOWN)
         #food under of snake head
         elif sy > fy:
-            if y_dir == 1:
+            if y_dir == 1 or self.danger_ahead(look_ahead, UP):
                 self.evade()
             else:
                 self.set_key(UP)
         if self.about_to_die():
             self.evade()
         return self.keys
+
+    def danger_ahead(self, look_ahead, direction):
+        free_slots = self.get_free_slots()
+        if free_slots[direction] < look_ahead:
+            return True
+        return False
 
     def about_to_die(self):
         pos = self.snake.head.pos
