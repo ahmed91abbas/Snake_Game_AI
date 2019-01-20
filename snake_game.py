@@ -112,12 +112,15 @@ class snake:
 
     def draw(self, surface):
         self.free_positions = self.all_positions.copy()
-        self.food.draw(surface)
         self.snake_positions = set()
         for i, bp in enumerate(self.body):
             bp.draw(surface)
             self.free_positions.remove(bp.pos)
             self.snake_positions.add(bp.pos)
+
+        while self.food.pos in self.snake_positions:
+            self.place_random_food()
+        self.food.draw(surface)
 
         #Add score text
         run_time = timeit.default_timer() - self.start_time
@@ -223,7 +226,8 @@ def main():
     height = 500
     rows = 20
     settings = (width, height, rows)
-    for i in range(1):
+    iterations = 1
+    for i in range(iterations):
         win = game_win(settings)
         win.create_game()
 
