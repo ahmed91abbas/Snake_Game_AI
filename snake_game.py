@@ -62,6 +62,10 @@ class snake:
         self.free_positions.remove(pos)
         self.place_random_food()
 
+        #vars for starving function
+        self.starving = False
+        self.temp_snake_positions = set()
+
     def move(self, player=None):
         if player:
             events = player.get_events()
@@ -122,6 +126,11 @@ class snake:
             self.place_random_food()
         self.food.draw(surface)
 
+        #check if starving
+        if str(self.snake_positions) in self.temp_snake_positions:
+            self.starving = True
+        self.temp_snake_positions.add(str(self.snake_positions))
+
         #Add score text
         run_time = timeit.default_timer() - self.start_time
         score = str(self.score) if len(str(self.score)) > 1 else "0" + str(self.score)
@@ -147,6 +156,8 @@ class snake:
     def place_random_food(self):
         pos = random.sample(self.free_positions, 1)[0]
         self.food.place(pos)
+        self.temp_snake_positions = set()
+        self.starving = False
 
     def reached_food(self):
         x = self.head.pos[0]
@@ -215,20 +226,22 @@ class game_win:
         run = True
         clock = pygame.time.Clock()
         while run:
-            pygame.time.delay(60)
-            clock.tick(20) #fps
+            # pygame.time.delay(60)
+            # clock.tick(20) #fps
             self.redraw(surface)
             run = self.snake.move(player=self.algo_player)
-        pass
+        return self.snake.score
 
 def main():
     width = 500
     height = 500
     rows = 20
     settings = (width, height, rows)
-    iterations = 1
+    iterations = 10
+    scores = 0
     for i in range(iterations):
         win = game_win(settings)
-        win.create_game()
-
+        score = win.create_game()
+        scores += score
+    print("\nAverage Score:", scores//iterations)
 main()

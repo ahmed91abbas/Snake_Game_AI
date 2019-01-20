@@ -38,6 +38,8 @@ class algo_player:
         fy = food.pos[1]
         #food to the right of snake head
         look_ahead = rows // 2
+        if self.snake.starving:
+            look_ahead = 1
         if sx < fx:
             if x_dir == -1 or self.danger_ahead(look_ahead, RIGHT):
                 self.evade()
