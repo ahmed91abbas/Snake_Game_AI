@@ -2,6 +2,7 @@ import pygame
 import sys
 import random
 from algorithmic_player import algo_player
+from scanner_player import Scanner_player
 import os
 import timeit
 
@@ -36,6 +37,7 @@ class body_part:
 
 class snake:
     def __init__(self, pos, settings):
+        self.run = True
         self.pos = pos
         self.width = settings[0]
         self.height = settings[1]
@@ -108,11 +110,10 @@ class snake:
 
         if not self.valid_head_pos(self.head.pos):
             self.kill_snake()
-            return False
 
         if self.reached_food():
             self.eat()
-        return True
+        return self.run
 
     def draw(self, surface):
         self.free_positions = self.all_positions.copy()
@@ -138,9 +139,10 @@ class snake:
         label = self.font.render(text, 1, (255,255,0))
         surface.blit(label, (29, self.height + 12))
 
-    def kill_snake(self):
+    def kill_snake(self, msg="The snake is dead!"):
         time = self.time_str(timeit.default_timer() - self.start_time)
-        print("The snake is dead!", "Score =", self.score, "Time =", time)
+        print(msg, "Score =", self.score, "Time =", time)
+        self.run = False
 
     def valid_head_pos(self, pos):
         x = pos[0]
@@ -154,10 +156,11 @@ class snake:
         return False
 
     def place_random_food(self):
-        pos = random.sample(self.free_positions, 1)[0]
-        self.food.place(pos)
-        self.temp_snake_positions = set()
-        self.starving = False
+        if self.run:
+            pos = random.sample(self.free_positions, 1)[0]
+            self.food.place(pos)
+            self.temp_snake_positions = set()
+            self.starving = False
 
     def reached_food(self):
         x = self.head.pos[0]
@@ -168,6 +171,8 @@ class snake:
 
     def eat(self):
         self.score += 1
+        if self.score == (self.rows * self.rows)-1:
+            self.kill_snake(msg="Perfect game!")
         tail = self.body[len(self.body)-1]
         x = tail.pos[0]
         y = tail.pos[1]
@@ -206,6 +211,7 @@ class game_win:
         self.gap = self.width // self.rows
         self.snake  = snake((0,self.rows//2), settings)
         self.algo_player = algo_player(self.snake)
+        self.scanner_player = Scanner_player(self.snake)
 
     def draw_grid(self, surface):
         color = (128, 137, 153)
@@ -226,18 +232,18 @@ class game_win:
         run = True
         clock = pygame.time.Clock()
         while run:
-            # pygame.time.delay(60)
-            # clock.tick(20) #fps
+            pygame.time.delay(120)#60)
+            clock.tick(20) #fps
             self.redraw(surface)
-            run = self.snake.move(player=self.algo_player)
+            run = self.snake.move(player=self.scanner_player)
         return self.snake.score
 
 def main():
     width = 500
     height = 500
-    rows = 20
+    rows = 4#20
     settings = (width, height, rows)
-    iterations = 10
+    iterations = 1
     scores = 0
     for i in range(iterations):
         win = game_win(settings)
